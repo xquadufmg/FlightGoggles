@@ -38,8 +38,10 @@ include(ExternalData)
 
 # Locations to download from
 set(ExternalData_URL_TEMPLATES
-        "http://d34kgw45d3q5oc.cloudfront.net/Public/FlightGoggles/HashedReleases/%(algo)/%(hash)"
-        "ftp://fast-nas.mit.edu/Public/FlightGoggles/HashedReleases/%(algo)/%(hash)"
+		"https://github.com/xquadufmg/FlightGoggles/releases/download/v2.0.5-xquad/FlightGoggles.x86_64"
+		"https://github.com/xquadufmg/FlightGoggles/releases/download/v2.0.5-xquad/FlightGoggles_Data.tar.xz"
+#        "http://d34kgw45d3q5oc.cloudfront.net/Public/FlightGoggles/HashedReleases/%(algo)/%(hash)"
+#        "ftp://fast-nas.mit.edu/Public/FlightGoggles/HashedReleases/%(algo)/%(hash)"
         )
 
 # Will be automatically cleaned on restart.

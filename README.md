@@ -1,79 +1,60 @@
 # FlightGoggles
 
-## Documentation, Installation, & Usage Instructions
-Please refer to the [wiki-page](https://github.com/mit-fast/FlightGoggles/wiki) for code documentation, installation, usage instructions. An [FAQ](https://github.com/mit-fast/FlightGoggles/wiki/FAQ) is also available there.
+This repository contains a mod of FlightGoggles simulator that builds a new race circuit with AIRR Gates.
 
-## Downloading Environment Assets / Using FlightGoggles with Unity3D
+![](Images/AIRR.png)
 
-Please refer to the [Unity3D Usage Guide](https://github.com/mit-fast/FlightGoggles/wiki/Unity3D-Usage_Guide).
-
-## Description
-
-A framework for photorealistic hardware-in-the-loop agile flight simulation using Unity3D and ROS.
-
-[![Video Link](Images/Abandoned_Factory_2.jpg)](https://www.youtube.com/watch?v=QCnU_M6DhYU)
-
-![](Images/Abandoned_Factory25.jpg)
-
-
-
-## Citation
-If you find this work useful for your research, please cite:
-```bibtex
-@inproceedings{guerra2019flightgoggles,
-  doi = {10.1109/iros40897.2019.8968116},
-  url = {https://doi.org/10.1109/iros40897.2019.8968116},
-  year = {2019},
-  month = nov,
-  publisher = {{IEEE}},
-  author = {Guerra, Winter and Tal, Ezra and Murali, Varun and Ryou, Gilhyun and Karaman, Sertac},
-  title = {{FlightGoggles}: Photorealistic Sensor Simulation for Perception-driven Robotics using Photogrammetry and Virtual Reality},
-  booktitle = {2019 {IEEE}/{RSJ} International Conference on Intelligent Robots and Systems ({IROS})}
-}
+## Installation
+Installing FlightGoggles Simulation Framework on Local Machine
+```sh
+# Setup catkin workspace
+mkdir -p ~/catkin_ws/src
+cd ~/catkin_ws/
+catkin init
+# Add workspace to bashrc.
+echo 'source ~/catkin_ws/devel/setup.bash' >> ~/.bashrc
+cd src
+wstool init
+# Install FlightGoggles nodes and deps from rosinstall file
+wstool merge https://raw.githubusercontent.com/xquadufmg/FlightGoggles/master/flightgoggles.rosinstall
+wstool update
+cd ../
+# Install required libraries.
+rosdep install --from-paths src --ignore-src --rosdistro kinetic -y
+# Install external libraries for flightgoggles_ros_bridge
+sudo apt install -y libzmqpp-dev libeigen3-dev
+# Install dependencies for flightgoggles renderer
+sudo apt install -y libvulkan1 vulkan-utils gdb
+# Build nodes and download FlightGoggles renderer binary
+# NOTE: to avoid downloading the FlightGoggles renderer binary, use the following build command:
+catkin build --cmake-args -DFLIGHTGOGGLES_DOWNLOAD_BINARY=ON
+# Refresh workspace
+source ~/.bashrc
 ```
-FlightGoggles: [Paper](https://arxiv.org/abs/1905.11377), [Website](http://flightgoggles.mit.edu)
 
-## Papers using this work
+**Note**: For AMD GPUs, mesa-vulkan-drivers might also need to be installed. This package should not be needed for usage on NVidia GPUs.
 
-```bibtex
-@inproceedings{antonini2018blackbird,
-  title={The Blackbird Dataset: A large-scale dataset for UAV perception in aggressive flight},
-  author={Antonini, Amado and Guerra, Winter and Murali, Varun and Sayre-McCord, Thomas and Karaman, Sertac},
-  booktitle={International Symposium on Experimental Robotics, {ISER} 2018, Buenos Aires,
-               Argentina, November 5-8, 2018.},
-  year={2018}
-}
+In case you want to **run the FlightGoggles Simulation Framework on AWS** or any Headless Linux Server, follow [this steps](https://github.com/mit-fast/FlightGoggles/wiki/Running-Flightgoggles-in-AWS).
 
-@inproceedings{sayremccord2018visual,
-  title={Visual-inertial navigation algorithm development using photorealistic camera simulation in the loop},
-  author={Sayre-McCord, Thomas and
-  Guerra, Winter and
-  Antonini, Amado and
-  Arneberg, Jasper and
-  Brown, Austin and
-  Cavalheiro, Guilherme and
-  Fang, Yajun and
-  Gorodetsky, Alex and
-  McCoy, Dave and
-  Quilter, Sebastian and
-  Riether, Fabian and
-  Tal, Ezra and
-  Terzioglu, Yunus and
-  Carlone, Luca and
-  Karaman, Sertac},
-  booktitle={2018 IEEE International Conference on Robotics and Automation (ICRA)},
-  year={2018}
-}
+
+## Running FlightGoggles
+```sh
+# In terminal 2, you can run and exit various launch files with the use_external_renderer flag.
+# To run example environment with joystick/keyboard teleoperation
+roslaunch flightgoggles teleopExample.launch use_external_renderer:=1
+# To run core simulation framework without teleoperation
+roslaunch flightgoggles core.launch use_external_renderer:=1
 ```
-Blackbird Dataset: [Paper](https://arxiv.org/abs/1810.01987), [Website](https://github.com/mit-fast/Blackbird-Dataset)
 
-Visual-inertial navigation algorithm development using photorealistic camera simulation in the loop: [Paper](https://doi.org/10.1109/icra.2018.8460692)
-
-## Core Contributers
-
+Users may also run any of three different challenges by running:
+```sh
+roslaunch flightgoggles reporter.launch level:=easy
+roslaunch flightgoggles reporter.launch level:=medium
+roslaunch flightgoggles reporter.launch level:=hard
 ```
-Winter Guerra
-Ezra Tal
-Varun Murali
-Sertac Karaman
-```
+
+The challenges are completed if the drone passes through each of the gates that are part of the challenge in order.
+
+These launch files run a reporter node in addition to the rest of the software that reports when the drone crosses the challenge gates and the overall time it took.
+
+Feel free to edit the yaml files on flightgoggles/config/challenges to setup your own challenges.
